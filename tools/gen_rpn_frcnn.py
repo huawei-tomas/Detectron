@@ -34,6 +34,8 @@ import sys
 import time
 import pickle
 
+
+sys.path.append('/home/thomas/caffe2')
 from caffe2.python import workspace
 
 from detectron.core.config import assert_and_infer_cfg
@@ -61,21 +63,23 @@ def parse_args():
         '--cfg',
         dest='cfg',
         help='cfg model file (/path/to/model_config.yaml)',
-        default=None,
+#        default=None,
+        default='configs/12_2017_baselines/e2e_faster_rcnn_R-101-FPN_2x.yaml',
         type=str
     )
     parser.add_argument(
         '--wts',
         dest='weights',
         help='weights model file (/path/to/model_weights.pkl)',
-        default=None,
+#        default=None,
+        default='https://s3-us-west-2.amazonaws.com/detectron/35857952/12_2017_baselines/e2e_faster_rcnn_R-101-FPN_2x.yaml.01_39_49.JPwJDh92/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl',
         type=str
     )
     parser.add_argument(
         '--output-dir',
         dest='output_dir',
-        help='directory for visualization pdfs (default: /tmp/infer_simple)',
-        default='/tmp/infer_simple',
+        help='directory for visualization pdfs (default: /diskc/temp_files/infer_simple)',
+        default='/diskc/temp_files/predict_output',
         type=str
     )
     parser.add_argument(
@@ -92,7 +96,7 @@ def parse_args():
         action='store_true'
     )
     parser.add_argument(
-        '--im_or_folder', 
+        '--image_path', 
         dest='im_or_folder',
         help='image or folder of images', 
         default=None
@@ -113,7 +117,6 @@ def parse_args():
 def main(args):
     logger = logging.getLogger(__name__)
 
-    pdb.set_trace()
     merge_cfg_from_file(args.cfg)
     cfg.NUM_GPUS = 1
     args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
@@ -131,8 +134,7 @@ def main(args):
         im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
     else:
         im_list = [args.im_or_folder]
-
-    print(im_list)
+    logger.info('Processing -> {}'.format(im_list[0]))
 
     for i, im_name in enumerate(im_list):
         im_basename = os.path.basename(im_name)
@@ -162,22 +164,22 @@ def main(args):
                 ' \ Note: inference on the first image will be slower than the '
                 'rest (caches and auto-tuning need to warm up)'
             )
-
-        # vis_utils.vis_one_image(
-        #     im[:, :, ::-1],  # BGR -> RGB for visualization
-        #     im_name,
-        #     args.output_dir,
-        #     cls_boxes,
-        #     cls_segms,
-        #     cls_keyps,
-        #     dataset=dummy_coco_dataset,
-        #     box_alpha=0.3,
-        #     show_class=True,
-        #     thresh=0.1,
-        #     kp_thresh=2,
-        #     ext=args.output_ext,
-        #     out_when_no_box=args.out_when_no_box
-        # )
+        # Visualization of bounding boxes
+#        vis_utils.vis_one_image(
+#            im[:, :, ::-1],  # BGR -> RGB for visualization
+#            im_name,
+#            args.output_dir,
+#            cls_boxes,
+#            cls_segms,
+#            cls_keyps,
+#            dataset=dummy_coco_dataset,
+#            box_alpha=0.3,
+#            show_class=True,
+#            thresh=0.1,
+#            kp_thresh=2,
+#            ext=args.output_ext,
+#            out_when_no_box=args.out_when_no_box
+#         )
 
 
 

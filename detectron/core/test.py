@@ -62,6 +62,8 @@ def im_detect_all(model, im, box_proposals, timers=None):
     if cfg.TEST.BBOX_AUG.ENABLED:
         scores, boxes, im_scale = im_detect_bbox_aug(model, im, box_proposals)
     else:
+#	import pdb
+#	pdb.set_trace()
         scores, boxes, im_scale = im_detect_bbox(
             model, im, cfg.TEST.SCALE, cfg.TEST.MAX_SIZE, boxes=box_proposals
         )

@@ -34,6 +34,8 @@ import sys
 import time
 import pickle
 
+
+sys.path.append('/home/thomas/caffe2')
 from caffe2.python import workspace
 
 from detectron.core.config import assert_and_infer_cfg
@@ -61,21 +63,23 @@ def parse_args():
         '--cfg',
         dest='cfg',
         help='cfg model file (/path/to/model_config.yaml)',
-        default=None,
+#        default=None,
+        default='configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml',
         type=str
     )
     parser.add_argument(
         '--wts',
         dest='weights',
         help='weights model file (/path/to/model_weights.pkl)',
-        default=None,
+#        default=None,
+        default='https://s3-us-west-2.amazonaws.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl',
         type=str
     )
     parser.add_argument(
         '--output-dir',
         dest='output_dir',
-        help='directory for visualization pdfs (default: /tmp/infer_simple)',
-        default='/tmp/infer_simple',
+        help='directory for visualization pdfs (default: /diskc/temp_files/infer_simple)',
+        default='/diskc/temp_files/infer_simple',
         type=str
     )
     parser.add_argument(
@@ -92,7 +96,7 @@ def parse_args():
         action='store_true'
     )
     parser.add_argument(
-        '--im_or_folder', 
+        '--image_path', 
         dest='im_or_folder',
         help='image or folder of images', 
         default=None
@@ -113,7 +117,6 @@ def parse_args():
 def main(args):
     logger = logging.getLogger(__name__)
 
-    pdb.set_trace()
     merge_cfg_from_file(args.cfg)
     cfg.NUM_GPUS = 1
     args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
@@ -148,11 +151,11 @@ def main(args):
                 model, im, None, timers=timers
             )
 
-            result_file = os.path.join(args.output_dir, im_basename + '_bbox.pkl')
-            with open(result_file, 'wb') as f:
-                boxes, _, _, _= vis_utils.convert_from_cls_format(cls_boxes, cls_segms, cls_keyps)
-                print(boxes.shape)
-                pickle.dump(cls_boxes, f)
+#            result_file = os.path.join(args.output_dir, im_basename + '_bbox.pkl')
+#            with open(result_file, 'wb') as f:
+#                boxes, _, _, _= vis_utils.convert_from_cls_format(cls_boxes, cls_segms, cls_keyps)
+#                print(boxes.shape)
+#                pickle.dump(cls_boxes, f)
 
         logger.info('Inference time: {:.3f}s'.format(time.time() - t))
         for k, v in timers.items():
@@ -163,21 +166,21 @@ def main(args):
                 'rest (caches and auto-tuning need to warm up)'
             )
 
-        # vis_utils.vis_one_image(
-        #     im[:, :, ::-1],  # BGR -> RGB for visualization
-        #     im_name,
-        #     args.output_dir,
-        #     cls_boxes,
-        #     cls_segms,
-        #     cls_keyps,
-        #     dataset=dummy_coco_dataset,
-        #     box_alpha=0.3,
-        #     show_class=True,
-        #     thresh=0.1,
-        #     kp_thresh=2,
-        #     ext=args.output_ext,
-        #     out_when_no_box=args.out_when_no_box
-        # )
+        vis_utils.vis_one_image(
+            im[:, :, ::-1],  # BGR -> RGB for visualization
+            im_name,
+            args.output_dir,
+            cls_boxes,
+            cls_segms,
+            cls_keyps,
+            dataset=dummy_coco_dataset,
+            box_alpha=0.3,
+            show_class=True,
+            thresh=0.1,
+            kp_thresh=2,
+            ext=args.output_ext,
+            out_when_no_box=args.out_when_no_box
+         )
 
 
 

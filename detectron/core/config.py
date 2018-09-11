@@ -469,6 +469,7 @@ __C.MODEL.BBOX_REG_WEIGHTS = (10., 10., 5., 5.)
 #    consists of alternating between RPN and Fast R-CNN training in a way that
 #    finally leads to a single network).
 __C.MODEL.FASTER_RCNN = False
+#__C.MODEL.FASTER_RCNN = True
 
 # Indicates the model makes instance mask predictions (as in Mask R-CNN)
 __C.MODEL.MASK_ON = False
@@ -980,7 +981,8 @@ __C.EXPECTED_RESULTS_EMAIL = b''
 
 # Models and proposals referred to by URL are downloaded to a local cache
 # specified by DOWNLOAD_CACHE
-__C.DOWNLOAD_CACHE = b'/tmp/detectron-download-cache'
+#__C.DOWNLOAD_CACHE = b'/tmp/detectron-download-cache'
+__C.DOWNLOAD_CACHE = b'/diskc/cache/detectron'
 
 
 # ---------------------------------------------------------------------------- #
